@@ -98,31 +98,31 @@ class ParallelManager
 {
 private:
 	/** @brief Lock used for critical section and condition synchronization. */
-	std::mutex m_lock;
-
-	/** @brief True if the stage init() step has been executed. */
-	bool m_init_done;
-
-	/** @brief True if the stage term() step has been executed. */
-	bool m_term_done;
-
-	/** @brief Condition variable for tracking stage processing completion. */
-	std::condition_variable m_complete;
-
-	/** @brief Number of tasks started, but not necessarily finished. */
-	std::atomic<unsigned int> m_start_count;
-
-	/** @brief Number of tasks finished. */
-	unsigned int m_done_count;
-
-	/** @brief Number of tasks that need to be processed. */
-	unsigned int m_task_count;
+	//std::mutex m_lock;
+	//
+	///** @brief True if the stage init() step has been executed. */
+	//bool m_init_done;
+	//
+	///** @brief True if the stage term() step has been executed. */
+	//bool m_term_done;
+	//
+	///** @brief Condition variable for tracking stage processing completion. */
+	//std::condition_variable m_complete;
+	//
+	///** @brief Number of tasks started, but not necessarily finished. */
+	//std::atomic<unsigned int> m_start_count;
+	//
+	///** @brief Number of tasks finished. */
+	//unsigned int m_done_count;
+	//
+	///** @brief Number of tasks that need to be processed. */
+	//unsigned int m_task_count;
 
 public:
 	/** @brief Create a new ParallelManager. */
 	ParallelManager()
 	{
-		reset();
+		//reset();
 	}
 
 	/**
@@ -133,11 +133,11 @@ public:
 	 */
 	void reset()
 	{
-		m_init_done = false;
-		m_term_done = false;
-		m_start_count = 0;
-		m_done_count = 0;
-		m_task_count = 0;
+		//m_init_done = false;
+		//m_term_done = false;
+		//m_start_count = 0;
+		//m_done_count = 0;
+		//m_task_count = 0;
 	}
 
 	/**
@@ -151,12 +151,12 @@ public:
 	 */
 	void init(std::function<unsigned int(void)> init_func)
 	{
-		std::lock_guard<std::mutex> lck(m_lock);
-		if (!m_init_done)
-		{
-			m_task_count = init_func();
-			m_init_done = true;
-		}
+		//std::lock_guard<std::mutex> lck(m_lock);
+		//if (!m_init_done)
+		//{
+		//	m_task_count = init_func();
+		//	m_init_done = true;
+		//}
 	}
 
 	/**
@@ -169,12 +169,12 @@ public:
 	 */
 	void init(unsigned int task_count)
 	{
-		std::lock_guard<std::mutex> lck(m_lock);
-		if (!m_init_done)
-		{
-			m_task_count = task_count;
-			m_init_done = true;
-		}
+		//std::lock_guard<std::mutex> lck(m_lock);
+		//if (!m_init_done)
+		//{
+		//	m_task_count = task_count;
+		//	m_init_done = true;
+		//}
 	}
 
 	/**
@@ -189,15 +189,15 @@ public:
 	 */
 	unsigned int get_task_assignment(unsigned int granule, unsigned int& count)
 	{
-		unsigned int base = m_start_count.fetch_add(granule, std::memory_order_relaxed);
-		if (base >= m_task_count)
-		{
-			count = 0;
-			return 0;
-		}
-
-		count = astc::min(m_task_count - base, granule);
-		return base;
+		//unsigned int base = m_start_count.fetch_add(granule, std::memory_order_relaxed);
+		//if (base >= m_task_count)
+		//{
+		//	count = 0;
+		//	return 0;
+		//}
+		//
+		//count = astc::min(m_task_count - base, granule);
+		//return base;
 	}
 
 	/**
@@ -212,13 +212,13 @@ public:
 	{
 		// Note: m_done_count cannot use an atomic without the mutex; this has a race between the
 		// update here and the wait() for other threads
-		std::unique_lock<std::mutex> lck(m_lock);
-		this->m_done_count += count;
-		if (m_done_count == m_task_count)
-		{
-			lck.unlock();
-			m_complete.notify_all();
-		}
+		//std::unique_lock<std::mutex> lck(m_lock);
+		//this->m_done_count += count;
+		//if (m_done_count == m_task_count)
+		//{
+		//	lck.unlock();
+		//	m_complete.notify_all();
+		//}
 	}
 
 	/**
@@ -226,8 +226,8 @@ public:
 	 */
 	void wait()
 	{
-		std::unique_lock<std::mutex> lck(m_lock);
-		m_complete.wait(lck, [this]{ return m_done_count == m_task_count; });
+		//std::unique_lock<std::mutex> lck(m_lock);
+		//m_complete.wait(lck, [this]{ return m_done_count == m_task_count; });
 	}
 
 	/**
@@ -241,12 +241,12 @@ public:
 	 */
 	void term(std::function<void(void)> term_func)
 	{
-		std::lock_guard<std::mutex> lck(m_lock);
-		if (!m_term_done)
-		{
-			term_func();
-			m_term_done = true;
-		}
+		//std::lock_guard<std::mutex> lck(m_lock);
+		//if (!m_term_done)
+		//{
+		//	term_func();
+		//	m_term_done = true;
+		//}
 	}
 };
 

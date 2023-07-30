@@ -6,7 +6,7 @@
 #include "bimg_p.h"
 #include <bx/hash.h>
 
-#include <astcenc.h>
+//#include <astcenc.h>
 
 #include <bx/debug.h>
 
@@ -4902,97 +4902,97 @@ namespace bimg
 			}
 			break;
 
-		case TextureFormat::ASTC4x4:
-		case TextureFormat::ASTC5x4:
-		case TextureFormat::ASTC5x5:
-		case TextureFormat::ASTC6x5:
-		case TextureFormat::ASTC6x6:
-		case TextureFormat::ASTC8x5:
-		case TextureFormat::ASTC8x6:
-		case TextureFormat::ASTC8x8:
-		case TextureFormat::ASTC10x5:
-		case TextureFormat::ASTC10x6:
-		case TextureFormat::ASTC10x8:
-		case TextureFormat::ASTC10x10:
-		case TextureFormat::ASTC12x10:
-		case TextureFormat::ASTC12x12:
-			if (BX_ENABLED(BIMG_DECODE_ASTC) )
-			{
-					const bimg::ImageBlockInfo& astcBlockInfo = bimg::getBlockInfo(_srcFormat);
-
-					astcenc_config config{};
-
-					astcenc_error status = astcenc_config_init(
-						  ASTCENC_PRF_LDR
-						, astcBlockInfo.blockWidth
-						, astcBlockInfo.blockHeight
-						, 1
-						, ASTCENC_PRE_MEDIUM
-						, ASTCENC_FLG_DECOMPRESS_ONLY
-						, &config
-						);
-
-					if (status != ASTCENC_SUCCESS)
-					{
-						BX_TRACE("astc error in config init %s", astcenc_get_error_string(status));
-						imageCheckerboard(_dst, _width, _height, 16, UINT32_C(0xff000000), UINT32_C(0xffffff00) );
-						break;
-					}
-
-					astcenc_context* context;
-					status = astcenc_context_alloc(&config, 1, &context);
-
-					if (status != ASTCENC_SUCCESS)
-					{
-						BX_TRACE("astc error in context alloc %s", astcenc_get_error_string(status));
-						imageCheckerboard(_dst, _width, _height, 16, UINT32_C(0xff000000), UINT32_C(0xffffff00) );
-						break;
-					}
-
-					//Put image data into an astcenc_image
-					astcenc_image image{};
-					image.dim_x     = _width;
-					image.dim_y     = _height;
-					image.dim_z     = 1;
-					image.data_type = ASTCENC_TYPE_U8;
-					image.data      = &_dst;
-
-					const uint32_t size = imageGetSize(NULL, uint16_t(_width), uint16_t(_height), 0, false, false, 1, _srcFormat);
-
-					static const astcenc_swizzle swizzle
-					{   //0123/rgba swizzle corresponds to ASTC_RGBA
-						ASTCENC_SWZ_R,
-						ASTCENC_SWZ_G,
-						ASTCENC_SWZ_B,
-						ASTCENC_SWZ_A,
-					};
-
-					status = astcenc_decompress_image(
-						  context
-						, (const uint8_t*)_src
-						, size
-						, &image
-						, &swizzle
-						, 0
-						);
-
-					if (status != ASTCENC_SUCCESS)
-					{
-						BX_TRACE("astc error in compress image %s", astcenc_get_error_string(status));
-						imageCheckerboard(_dst, _width, _height, 16, UINT32_C(0xff000000), UINT32_C(0xffffff00) );
-
-						astcenc_context_free(context);
-						break;
-					}
-
-					astcenc_context_free(context);
-			}
-			else
-			{
-				BX_WARN(false, "ASTC decoder is disabled (BIMG_DECODE_ASTC).");
-				imageCheckerboard(_dst, _width, _height, 16, UINT32_C(0xff000000), UINT32_C(0xff00ff00) );
-			}
-			break;
+		//case TextureFormat::ASTC4x4:
+		//case TextureFormat::ASTC5x4:
+		//case TextureFormat::ASTC5x5:
+		//case TextureFormat::ASTC6x5:
+		//case TextureFormat::ASTC6x6:
+		//case TextureFormat::ASTC8x5:
+		//case TextureFormat::ASTC8x6:
+		//case TextureFormat::ASTC8x8:
+		//case TextureFormat::ASTC10x5:
+		//case TextureFormat::ASTC10x6:
+		//case TextureFormat::ASTC10x8:
+		//case TextureFormat::ASTC10x10:
+		//case TextureFormat::ASTC12x10:
+		//case TextureFormat::ASTC12x12:
+		//	if (BX_ENABLED(BIMG_DECODE_ASTC) )
+		//	{
+		//			const bimg::ImageBlockInfo& astcBlockInfo = bimg::getBlockInfo(_srcFormat);
+		//
+		//			astcenc_config config{};
+		//
+		//			astcenc_error status = astcenc_config_init(
+		//				  ASTCENC_PRF_LDR
+		//				, astcBlockInfo.blockWidth
+		//				, astcBlockInfo.blockHeight
+		//				, 1
+		//				, ASTCENC_PRE_MEDIUM
+		//				, ASTCENC_FLG_DECOMPRESS_ONLY
+		//				, &config
+		//				);
+		//
+		//			if (status != ASTCENC_SUCCESS)
+		//			{
+		//				BX_TRACE("astc error in config init %s", astcenc_get_error_string(status));
+		//				imageCheckerboard(_dst, _width, _height, 16, UINT32_C(0xff000000), UINT32_C(0xffffff00) );
+		//				break;
+		//			}
+		//
+		//			astcenc_context* context;
+		//			status = astcenc_context_alloc(&config, 1, &context);
+		//
+		//			if (status != ASTCENC_SUCCESS)
+		//			{
+		//				BX_TRACE("astc error in context alloc %s", astcenc_get_error_string(status));
+		//				imageCheckerboard(_dst, _width, _height, 16, UINT32_C(0xff000000), UINT32_C(0xffffff00) );
+		//				break;
+		//			}
+		//
+		//			//Put image data into an astcenc_image
+		//			astcenc_image image{};
+		//			image.dim_x     = _width;
+		//			image.dim_y     = _height;
+		//			image.dim_z     = 1;
+		//			image.data_type = ASTCENC_TYPE_U8;
+		//			image.data      = &_dst;
+		//
+		//			const uint32_t size = imageGetSize(NULL, uint16_t(_width), uint16_t(_height), 0, false, false, 1, _srcFormat);
+		//
+		//			static const astcenc_swizzle swizzle
+		//			{   //0123/rgba swizzle corresponds to ASTC_RGBA
+		//				ASTCENC_SWZ_R,
+		//				ASTCENC_SWZ_G,
+		//				ASTCENC_SWZ_B,
+		//				ASTCENC_SWZ_A,
+		//			};
+		//
+		//			status = astcenc_decompress_image(
+		//				  context
+		//				, (const uint8_t*)_src
+		//				, size
+		//				, &image
+		//				, &swizzle
+		//				, 0
+		//				);
+		//
+		//			if (status != ASTCENC_SUCCESS)
+		//			{
+		//				BX_TRACE("astc error in compress image %s", astcenc_get_error_string(status));
+		//				imageCheckerboard(_dst, _width, _height, 16, UINT32_C(0xff000000), UINT32_C(0xffffff00) );
+		//
+		//				astcenc_context_free(context);
+		//				break;
+		//			}
+		//
+		//			astcenc_context_free(context);
+		//	}
+		//	else
+		//	{
+		//		BX_WARN(false, "ASTC decoder is disabled (BIMG_DECODE_ASTC).");
+		//		imageCheckerboard(_dst, _width, _height, 16, UINT32_C(0xff000000), UINT32_C(0xff00ff00) );
+		//	}
+		//	break;
 
 		default:
 			{

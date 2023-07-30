@@ -66,7 +66,7 @@ group "libs"
 dofile(path.join(BX_DIR, "scripts/bx.lua"))
 dofile "bimg.lua"
 dofile "bimg_decode.lua"
-dofile "bimg_encode.lua"
+--dofile "bimg_encode.lua"
 
 if _OPTIONS["with-tools"] then
 	group "tools"
